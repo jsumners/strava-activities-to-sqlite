@@ -71,6 +71,22 @@ async function main (args) {
     })
   }
 
+  const distinctGearIds = db.distinctGearIds()
+  const knownGearIds = db.knownGearIds()
+  log.debug({ distinctGearIds, knownGearIds })
+  for (const gearId of distinctGearIds) {
+    if (knownGearIds.includes(gearId)) continue
+    const gearInfo = await stravaClient.getGear({ authContext, gearId })
+    log.debug('adding gear: %s', gearInfo.id)
+    db.addGear({
+      id: gearInfo.id,
+      brand_name: gearInfo.brand_name,
+      model_name: gearInfo.model_name,
+      frame_type: gearInfo.frame_type,
+      description: gearInfo.description
+    })
+  }
+
   db.close()
   log.info('done')
 }
