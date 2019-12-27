@@ -18,3 +18,16 @@ Their API, however, returns usuable.
 1. Run the app `node sats.js ./my-strava-data.sqlite3`
 
 Note: Strava imposes rate limiting -- https://developers.strava.com/docs/#rate-limiting
+
+## Useful Queries
+
+### Miles Ridden In A Year
+
+```sql
+select sum(distance) * 0.00062137 as miles_ridden
+from activities
+where
+  datetime(start_date) > datetime('2018-12-31')
+  and datetime(start_date) < datetime('2020-01-01')
+  and lower(type) in ('ride', 'virtualride');
+```
