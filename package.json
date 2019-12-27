@@ -1,0 +1,41 @@
+{
+  "name": "strava-activities-to-sqlite",
+  "version": "1.0.0",
+  "description": "Convert Strava activities.csv to an sqlite db",
+  "main": "sats.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jsumners/strava-activities-to-sqlite.git"
+  },
+  "keywords": [
+    "strava",
+    "cli"
+  ],
+  "author": "James Sumners",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jsumners/sats/issues"
+  },
+  "homepage": "https://github.com/jsumners/sats#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  },
+  "dependencies": {
+    "better-sqlite3": "^5.4.3",
+    "dotenv": "^8.2.0",
+    "fastify": "^2.11.0",
+    "form-data": "^3.0.0",
+    "got": "^10.2.0",
+    "open": "^7.0.0",
+    "pino": "^5.15.0",
+    "pino-pretty": "^3.5.0"
+  }
+}
