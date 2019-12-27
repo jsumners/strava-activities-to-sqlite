@@ -1,5 +1,5 @@
 create table if not exists activities (
-  id varchar,
+  id varchar unique primary key,
   name varchar,
   distance real,
   moving_time real,
