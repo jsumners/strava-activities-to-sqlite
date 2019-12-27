@@ -38,7 +38,10 @@ async function main (args) {
   const authContext = await stravaClient.getAuthContext(args)
   log.debug('api access context: %j', authContext)
 
-  for await (const activities of stravaClient.getActivities({ authContext })) {
+  const mostRecentActivity = db.mostRecentActivity()
+  const afterDate = mostRecentActivity ? mostRecentActivity.start_date : null
+
+  for await (const activities of stravaClient.getActivities({ authContext, after: afterDate })) {
     activities.forEach(act => {
       log.info('adding activity %s', act.id)
       db.addActivity({
@@ -69,4 +72,5 @@ async function main (args) {
   }
 
   db.close()
+  log.info('done')
 }
