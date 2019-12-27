@@ -31,3 +31,16 @@ where
   and datetime(start_date) < datetime('2020-01-01')
   and lower(type) in ('ride', 'virtualride');
 ```
+
+### Distance Ridden Per Gear
+
+```sql
+select
+  b.brand_name,
+  b.model_name,
+  sum(a.distance) * 0.00062137 as miles_ridden
+from activities a
+join gear b
+  on b.id = a.gear_id
+group by a.gear_id;
+```
