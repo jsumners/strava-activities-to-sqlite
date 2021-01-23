@@ -7,9 +7,10 @@ const authorizeUrl = [
   '&response_type=code',
   `&redirect_uri=${encodeURIComponent('https://' + APP_DOMAIN + '/exchange_token')}`,
   '&approval_prompt=force',
-  '&scope=read,activity:read'
+  '&scope=read,read_all,activity:read_all'
 ].join('')
 
+const { boolean } = require('boolean')
 const open = require('open')
 const log = require('./lib/logger')
 const stravaClient = require('./lib/strava-client')
@@ -20,6 +21,15 @@ if (!dbPath) {
   process.exit(1)
 }
 const db = require('./lib/database')({ dbPath })
+
+// Allow specifying a date to start for retreiving activities.
+// This overrides the automatic detection of the most recent activity through
+// what has already been recorded in the database.
+const startDateArg = process.argv[3]
+let startDate
+if (startDateArg && isNaN(Date.parse(startDateArg)) === false) {
+  startDate = startDateArg
+}
 
 const authServer = require('./lib/auth-server')()
 authServer.on('ready', () => open(authorizeUrl))
@@ -38,8 +48,11 @@ async function main (args) {
   const authContext = await stravaClient.getAuthContext(args)
   log.debug('api access context: %j', authContext)
 
-  const mostRecentActivity = db.mostRecentActivity()
-  const afterDate = mostRecentActivity ? mostRecentActivity.start_date : null
+  let afterDate = startDate
+  if (afterDate === undefined) {
+    const mostRecentActivity = db.mostRecentActivity()
+    afterDate = mostRecentActivity ? mostRecentActivity.start_date : null
+  }
 
   for await (const activities of stravaClient.getActivities({ authContext, after: afterDate })) {
     activities.forEach(act => {
@@ -52,10 +65,13 @@ async function main (args) {
         elapsed_time: act.elapsed_time,
         total_elevation_gain: act.total_elevation_gain,
         type: act.type,
+        manual: boolean(act.manual) === true ? 1 : 0,
+        trainer: boolean(act.trainer) === true ? 1 : 0,
         start_date: act.start_date,
         start_date_local: act.start_date_local,
         timezone: act.timezone,
         utc_offset: act.utc_offset,
+        description: act.description,
         gear_id: act.gear_id,
         average_speed: act.average_speed,
         max_speed: act.max_speed,

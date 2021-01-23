@@ -44,3 +44,19 @@ join gear b
   on b.id = a.gear_id
 group by a.gear_id;
 ```
+
+### Distance Ridden On New Tires
+
+```sql
+select sum(distance) * 0.00062137 as miles_ridden
+from activities
+where
+  datetime(start_date) > (
+    select start_date
+    from activities
+    where description like '%[new tires]%'
+      and start_date > datetime('2020-01-01')
+  )
+  and datetime(start_date) < datetime('2020-12-31')
+  and lower(type) in ('ride');
+```
