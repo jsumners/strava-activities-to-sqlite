@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "better-sqlite3": "^7.1.2",
+    "boolean": "^3.0.2",
     "dotenv": "^8.2.0",
     "fastify": "^3.10.1",
     "form-data": "^3.0.0",

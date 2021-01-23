@@ -7,9 +7,10 @@ const authorizeUrl = [
   '&response_type=code',
   `&redirect_uri=${encodeURIComponent('https://' + APP_DOMAIN + '/exchange_token')}`,
   '&approval_prompt=force',
-  '&scope=read,activity:read'
+  '&scope=read,read_all,activity:read_all'
 ].join('')
 
+const { boolean } = require('boolean')
 const open = require('open')
 const log = require('./lib/logger')
 const stravaClient = require('./lib/strava-client')
@@ -52,10 +53,13 @@ async function main (args) {
         elapsed_time: act.elapsed_time,
         total_elevation_gain: act.total_elevation_gain,
         type: act.type,
+        manual: boolean(act.manual) === true ? 1 : 0,
+        trainer: boolean(act.trainer) === true ? 1 : 0,
         start_date: act.start_date,
         start_date_local: act.start_date_local,
         timezone: act.timezone,
         utc_offset: act.utc_offset,
+        description: act.description,
         gear_id: act.gear_id,
         average_speed: act.average_speed,
         max_speed: act.max_speed,
