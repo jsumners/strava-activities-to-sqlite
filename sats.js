@@ -22,6 +22,15 @@ if (!dbPath) {
 }
 const db = require('./lib/database')({ dbPath })
 
+// Allow specifying a date to start for retreiving activities.
+// This overrides the automatic detection of the most recent activity through
+// what has already been recorded in the database.
+const startDateArg = process.argv[3]
+let startDate
+if (startDateArg && isNaN(Date.parse(startDateArg)) === false) {
+  startDate = startDateArg
+}
+
 const authServer = require('./lib/auth-server')()
 authServer.on('ready', () => open(authorizeUrl))
 authServer.on('error', (error) => {
@@ -39,8 +48,11 @@ async function main (args) {
   const authContext = await stravaClient.getAuthContext(args)
   log.debug('api access context: %j', authContext)
 
-  const mostRecentActivity = db.mostRecentActivity()
-  const afterDate = mostRecentActivity ? mostRecentActivity.start_date : null
+  let afterDate = startDate
+  if (afterDate === undefined) {
+    const mostRecentActivity = db.mostRecentActivity()
+    afterDate = mostRecentActivity ? mostRecentActivity.start_date : null
+  }
 
   for await (const activities of stravaClient.getActivities({ authContext, after: afterDate })) {
     activities.forEach(act => {
