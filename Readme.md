@@ -5,7 +5,7 @@ activities into a usable [SQLite3](https://sqlite.org) database. This is
 useful when you want to issue queries like "how far did I ride in 2018 vs 2019".
 Strava's normal data export comes in a CSV format that is difficult to parse
 and has very difficult to work with dates (sans any information about timezone).
-Their API, however, returns usuable.
+Their API, however, returns usable data.
 
 ![query example](/screenshot.png?raw=true)
 
@@ -17,7 +17,7 @@ Their API, however, returns usuable.
 1. Copy `.env.sample` to `.env` and adjust accordingly
 1. Run the app `node sats.js ./my-strava-data.sqlite3`
 
-Note: Strava imposes rate limiting -- https://developers.strava.com/docs/#rate-limiting
+Note: Strava imposes rate limiting -- https://developers.strava.com/docs/rate-limits/
 
 ## Useful Queries
 
@@ -38,7 +38,8 @@ where
 select
   b.brand_name,
   b.model_name,
-  sum(a.distance) * 0.00062137 as miles_ridden
+  sum(a.distance) * 0.00062137 as miles_ridden,
+  (sum(a.moving_time) / 60) / 60 as total_hours
 from activities a
 join gear b
   on b.id = a.gear_id
